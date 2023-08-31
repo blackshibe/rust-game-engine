@@ -24,6 +24,14 @@ fn read_file_to_c_string(path: &str) -> CString {
     CString::new(read_file(path)).expect("Failed to read file")
 }
 
+fn shader_comp_status(status: i32) -> &'static str {
+    if status == 1 {
+        "OK"
+    } else {
+        "FAIL"
+    }
+}
+
 impl Drop for OpenglShader {
     fn drop(&mut self) {
         unsafe {
@@ -47,9 +55,11 @@ impl OpenglShader {
 
             let mut success = -1;
             GetShaderiv(id, COMPILE_STATUS, &mut success);
-            println!("Shader compile status: {}", success);
 
-            if (success == 0) {
+            let status = shader_comp_status(success);
+            println!("Shader compiled with status '{}'", status);
+
+            if success == 0 {
                 let mut info_log = vec![0; 512];
                 GetShaderInfoLog(
                     id,
@@ -92,7 +102,7 @@ impl OpenglShader {
 
         let shader_id = OpenglShader::link_program(vertex_shader, fragment_shader);
 
-        0
+        shader_id
         // shader_program
     }
 }

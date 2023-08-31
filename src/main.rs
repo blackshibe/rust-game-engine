@@ -37,15 +37,15 @@ fn main() {
     let vertices: [[f32; 3]; 3] = [[-0.5, 0.5, 0.0], [0.5, 0.5, 0.0], [0.0, -0.5, 0.0]];
     let vertex_size: types::GLsizei = size_of::<[f32; 3]>().try_into().unwrap();
 
-    let mut VBO = 0;
-    let mut VAO = 0;
+    let mut vbo = 0;
+    let mut vao = 0;
 
     unsafe {
-        GenBuffers(1, &mut VBO);
-        GenVertexArrays(1, &mut VAO);
+        GenBuffers(1, &mut vbo);
+        GenVertexArrays(1, &mut vao);
 
-        BindVertexArray(VAO);
-        BindBuffer(ARRAY_BUFFER, VBO);
+        BindVertexArray(vao);
+        BindBuffer(ARRAY_BUFFER, vbo);
         BufferData(
             gl::ARRAY_BUFFER,
             size_of_val(&vertices) as isize,
@@ -65,7 +65,7 @@ fn main() {
         unsafe {
             gl::Clear(gl::COLOR_BUFFER_BIT);
             gl::UseProgram(rect_shader.id);
-            gl::BindVertexArray(VAO);
+            gl::BindVertexArray(vao);
             gl::DrawArrays(TRIANGLES, 0, 3);
         };
 
@@ -84,8 +84,9 @@ fn handle_window_event(window: &mut glfw::Window, event: glfw::WindowEvent) {
     }
 }
 
-fn handle_size_callback(window: &mut glfw::Window, width: i32, height: i32) {
+fn handle_size_callback(_window: &mut glfw::Window, width: i32, height: i32) {
     println!("Window resized to {}x{}", width, height);
+
     unsafe {
         gl::Viewport(0, 0, width, height);
     }
